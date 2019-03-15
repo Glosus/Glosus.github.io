@@ -21,8 +21,35 @@
 		}
 		#navbar, #navbar ul{
 			margin: 0;
+			padding: 0;
 			list-style-type: none;
 		}
+		/* User */
+		#user{
+			background-color: #ffffff;
+			border: 1px solid #b9b9b9;
+			border-radius: 10px;
+			margin-top: 10px;
+			padding: 10px;
+		}
+		#userName{
+			font-size: 32px;
+			font-weight: bold;
+		}		
+		/* News */
+		#news{
+			margin-top: 10px;
+			font-size: 32px;
+		}
+		.post{
+			background-color: #ffffff;
+			border: 1px solid #b9b9b9;
+			border-radius: 10px;
+			padding: 10px;
+			margin: 10px 0px;
+		}
+
+		/* Big Screen */
 		@media (min-width: 1000px){
 			#wrapper{
 				margin: 0 auto;
@@ -33,7 +60,6 @@
 			#header{
 				height: 36px;				
 			}
-
 			#navbar li{
 				position: relative;
 				float: left;
@@ -42,18 +68,13 @@
 			
 			/* User */
 			#user{
-				background-color: #ffffff;
-				border: 1px solid #b9b9b9;
-				border-radius: 10px;
-				margin-top: 10px;
 				position: relative;
-				min-height: 300px;
-				
+				min-height: 300px;			
 				overflow: hidden;
 			}
 			#userAvatar{
-				max-height: 220px;
-				max-width: 220px;
+				height: 220px;
+				width: 220px;
 				left: 10px;
 				top: 10px;
 				position: absolute;
@@ -65,41 +86,32 @@
 				max-width: 710px;
 				width: 100%;
 			}
-			#userName{
-				font-size: 32px;
-				font-weight: bold;
-			}
 			#details span{
 				margin-top: 10px;
 				display:inline-block;
 				text-align: justify;
 			}
-			
-			
-			#news{
-				margin-top: 10px;
-				font-size: 32px;
-			}
-			.post{
-				background-color: #ffffff;
-				border: 1px solid #b9b9b9;
-				border-radius: 10px;
-				padding: 10px;
-				margin: 10px 0px;
-			}
 		}
+		/* Mobile */
 		@media (max-width: 999px){
 			/* Header */
 			#header{
-								
+				text-align: center;				
 			}
 			#navbar li{
-				margin: 10px 5px;
+				margin: 10px;
+			}
+			/* User */
+			#user{
+				text-align: center;
+			}
+			#userAvatar{
+				max-height: 320px;
+				max-width: 320px;
 			}
 			#details{
 				display: none;
 			}
-			
 		}
 		</style>
 		<script></script>	
