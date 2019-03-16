@@ -72,7 +72,9 @@
 					ctx.stroke();
 					writeText();
 					$(document).ready(function(){
-						download();
+						try{
+							download();
+						}catch(e){}
 					});
 				}
 			}
@@ -128,7 +130,7 @@
 				link.download = "my-image.png";
 				if (confirm("Do you want to download this?")){
 					link.click();
-				};				
+				}			
 			}
 			
 			function start(){
