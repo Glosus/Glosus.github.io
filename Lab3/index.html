@@ -6,31 +6,29 @@
 		<meta name="description" content="Web Lab3">
 		<meta name="author" content="Pchelkin">
 		<meta http-equiv="Access-Control-Allow-Origin" content="*">
-		<meta name="Access-Control-Allow-Origin" content="*" />
-		<meta name="Access-Control-Allow-Headers" content="*" />
 
 		<style>
-			#wrapper{
-				margin: 0 auto;
-				width: 1000px;
-				text-align: center;
-			}
-			#canvas{
-				width: 800px;
-				height: 800px;
-				border: 1px solid #404040;		
-				margin: 0 auto;
-				
-			}
 		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 		<script>
 			var uploadLocker = 4;
+			var quiteLocker = false;
 			var imgArray = [];
 			let ctx;
 			var canvasSize = 800; 
-			var quitesArray;
+			var quite;
 			
 			function canvasConnect(){
+				var myElement = document.createElement("canvas");
+				myElement.id = "canvas";
+				var body = document.body;
+				body.appendChild(myElement);
+				canvasId = document.getElementById("canvas");
+				canvasId.style.width = "800px";
+				canvasId.style.height = "800px";
+				canvasId.style.border = "1px solid #404040";
+				canvasId.style.margin = "20px auto";
+				canvas.style.display = "block";
 				let Canvas = document.getElementById("canvas");
 				let CanvasSize = Canvas.clientWidth;
 				Canvas.width = CanvasSize;
@@ -62,7 +60,7 @@
 			}
 			
 			function imgHandler(){
-				if (uploadLocker == 0){
+				if (uploadLocker == 0 && quiteLocker == true){
 					var firstImgHeight = 250 + Math.round(Math.random() * 250);
 					var firstImgWidth = 250 + Math.round(Math.random() * 250);
 					drowImg(imgArray[0], 0, 0, firstImgWidth, firstImgHeight);
@@ -72,11 +70,8 @@
 					ctx.fillStyle = "rgba(0,0,0,0.75)";
 					ctx.fillRect(0,0,canvasSize,canvasSize);
 					ctx.stroke();
-					try{		
-						writeText();
-					} catch(e) {
-						console.log(e.name)
-					}	
+					writeText();
+					download();
 				}
 			}
 			
@@ -85,25 +80,22 @@
 			}
 			
 			function getStrings(){
-				var xhr = new XMLHttpRequest();
-				var forismaticUrl = "quotes.json";
-				var params = '';
-				xhr.open("GET", forismaticUrl, false);
-				xhr.send();
-				if (xhr.status != 200) {
-					console.log( xhr.status + ': ' + xhr.statusText ); 
-				} else {
-					quitesArray = JSON.parse(xhr.responseText);
-				}
+				$.getJSON("https://api.forismatic.com/api/1.0/?method=getQuote&lang=ru&format=jsonp&jsonp=?")
+					.done(function(myJson) {
+						if (uploadLocker == 0){
+							quite = myJson.quoteText;
+							quiteLocker = true;
+							imgHandler();
+						}
+				});
 			}
-			
+
 			function writeText(){
 				var numQuote = Math.round(Math.random() * 9);
-				var text = quitesArray[numQuote].quoteText;
 				ctx.textBaseline = "center";
 				ctx.font = "bold 40px Arial";
 				ctx.fillStyle = "#FFF";
-				wrapText(ctx, text, 100, 320, 600, 50);
+				wrapText(ctx, quite, 100, 320, 600, 50);
 			}
 			
 			function wrapText(ctx, text, marginLeft, marginTop, maxWidth, lineHeight){
@@ -126,20 +118,26 @@
 				ctx.fillText(line, marginLeft + (600 - ctx.measureText(line).width) / 2, marginTop);
 			}
 			
+			function download(){
+				var dataURL = canvas.toDataURL("image/png");
+				var link = document.createElement("a");
+				link.id = "link";
+				link.href = dataURL;
+				link.download = "my-image-name.png";
+				$(document).ready(function(){
+					if (confirm("Do you want to download this?")){
+						link.click();
+					}
+				});				
+			}
+			
 			function start(){
 				canvasConnect();
-				try{
-					getStrings();
-				} catch(e) {
-					console.log(e.name)
-				}				
 				upload();
+				getStrings();
 			};
 		</script>	
 	</head>
-	<body onload="start()">
-		<div id="wrapper">
-			<canvas id="canvas"></canvas>
-		</div>
-	</body>
+	
+	<body onload="start()"></body>
 </html>
