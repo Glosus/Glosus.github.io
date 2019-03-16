@@ -5,6 +5,10 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="description" content="Web Lab3">
 		<meta name="author" content="Pchelkin">
+		<meta http-equiv="Access-Control-Allow-Origin" content="*">
+		<meta name="Access-Control-Allow-Origin" content="*" />
+		<meta name="Access-Control-Allow-Headers" content="*" />
+
 		<style>
 			#wrapper{
 				margin: 0 auto;
@@ -24,6 +28,7 @@
 			var imgArray = [];
 			let ctx;
 			var canvasSize = 800; 
+			var quitesArray;
 			
 			function canvasConnect(){
 				let Canvas = document.getElementById("canvas");
@@ -34,40 +39,100 @@
 			}
 			
 			function upload(){
+				var dublicates = [];
 				for (var i = 0; i < 4; i++){
 					newImage = new Image;
-					imgNum = Math.round(Math.random() * 49);
+					var isNewImage = false;
+					var imgNum;
+					while (!isNewImage){
+						imgNum = Math.round(Math.random() * 49);
+						isNewImage = true;
+						for (var j = 0; j < dublicates.length; j++){
+							if (imgNum == dublicates[j]) isNewImage = false;
+						}
+					}
+					dublicates.push(imgNum);
 					newImage.src = "img/" + imgNum + ".jpg";
 					newImage.onload = function() {
 						uploadLocker--;
 						imgHandler();
 					}
-					imgArray.push(newImage);
-					
+					imgArray.push(newImage);				
 				}
 			}
 			
 			function imgHandler(){
 				if (uploadLocker == 0){
-					for (var i = 0; i < 4; i++){				
-						console.log(imgArray[i], imgArray[i].height, imgArray[i].width);
-					}
 					var firstImgHeight = 250 + Math.round(Math.random() * 250);
 					var firstImgWidth = 250 + Math.round(Math.random() * 250);
 					drowImg(imgArray[0], 0, 0, firstImgWidth, firstImgHeight);
 					drowImg(imgArray[1], firstImgWidth, 0, canvasSize - firstImgWidth, firstImgHeight);
 					drowImg(imgArray[2], 0, firstImgHeight, firstImgWidth, canvasSize - firstImgHeight);
 					drowImg(imgArray[3], firstImgWidth, firstImgHeight, canvasSize - firstImgWidth, canvasSize - firstImgHeight);
+					ctx.fillStyle = "rgba(0,0,0,0.75)";
+					ctx.fillRect(0,0,canvasSize,canvasSize);
+					ctx.stroke();
+					try{		
+						writeText();
+					} catch(e) {
+						console.log(e.name)
+					}	
 				}
 			}
 			
 			function drowImg(img, x, y, width, height){
-				console.log(x, y, width, height);
-				ctx.drawImage(img, x, y, width, height);
+				ctx.drawImage(img, x, y, width, height);			
+			}
+			
+			function getStrings(){
+				var xhr = new XMLHttpRequest();
+				var forismaticUrl = "quotes.json";
+				var params = '';
+				xhr.open("GET", forismaticUrl, false);
+				xhr.send();
+				if (xhr.status != 200) {
+					console.log( xhr.status + ': ' + xhr.statusText ); 
+				} else {
+					quitesArray = JSON.parse(xhr.responseText);
+				}
+			}
+			
+			function writeText(){
+				var numQuote = Math.round(Math.random() * 9);
+				var text = quitesArray[numQuote].quoteText;
+				ctx.textBaseline = "center";
+				ctx.font = "bold 40px Arial";
+				ctx.fillStyle = "#FFF";
+				wrapText(ctx, text, 100, 320, 600, 50);
+			}
+			
+			function wrapText(ctx, text, marginLeft, marginTop, maxWidth, lineHeight){
+				var words = text.split(" ");
+				var countWords = words.length;
+				var line = "";
+				for (var n = 0; n < countWords; n++) {
+					var testLine = line + words[n] + " ";
+					var testWidth = ctx.measureText(testLine).width;
+					if (testWidth > maxWidth) {
+						ctx.fillText(line, marginLeft + (600 - ctx.measureText(line).width) / 2, marginTop);
+						line = words[n] + " ";
+						marginTop += lineHeight;
+					}
+					else {
+						line = testLine;
+					}
+				}
+				
+				ctx.fillText(line, marginLeft + (600 - ctx.measureText(line).width) / 2, marginTop);
 			}
 			
 			function start(){
 				canvasConnect();
+				try{
+					getStrings();
+				} catch(e) {
+					console.log(e.name)
+				}				
 				upload();
 			};
 		</script>	
