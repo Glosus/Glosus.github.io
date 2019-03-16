@@ -5,11 +5,76 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<meta name="description" content="Web Lab3">
 		<meta name="author" content="Pchelkin">
-		<style></style>
-		<script></script>	
+		<style>
+			#wrapper{
+				margin: 0 auto;
+				width: 1000px;
+				text-align: center;
+			}
+			#canvas{
+				width: 800px;
+				height: 800px;
+				border: 1px solid #404040;		
+				margin: 0 auto;
+				
+			}
+		</style>
+		<script>
+			var uploadLocker = 4;
+			var imgArray = [];
+			let ctx;
+			var canvasSize = 800; 
+			
+			function canvasConnect(){
+				let Canvas = document.getElementById("canvas");
+				let CanvasSize = Canvas.clientWidth;
+				Canvas.width = CanvasSize;
+				Canvas.height = CanvasSize;
+				ctx = Canvas.getContext('2d');
+			}
+			
+			function upload(){
+				for (var i = 0; i < 4; i++){
+					newImage = new Image;
+					imgNum = Math.round(Math.random() * 49);
+					newImage.src = "img/" + imgNum + ".jpg";
+					newImage.onload = function() {
+						uploadLocker--;
+						imgHandler();
+					}
+					imgArray.push(newImage);
+					
+				}
+			}
+			
+			function imgHandler(){
+				if (uploadLocker == 0){
+					for (var i = 0; i < 4; i++){				
+						console.log(imgArray[i], imgArray[i].height, imgArray[i].width);
+					}
+					var firstImgHeight = 250 + Math.round(Math.random() * 250);
+					var firstImgWidth = 250 + Math.round(Math.random() * 250);
+					drowImg(imgArray[0], 0, 0, firstImgWidth, firstImgHeight);
+					drowImg(imgArray[1], firstImgWidth, 0, canvasSize - firstImgWidth, firstImgHeight);
+					drowImg(imgArray[2], 0, firstImgHeight, firstImgWidth, canvasSize - firstImgHeight);
+					drowImg(imgArray[3], firstImgWidth, firstImgHeight, canvasSize - firstImgWidth, canvasSize - firstImgHeight);
+				}
+			}
+			
+			function drowImg(img, x, y, width, height){
+				console.log(x, y, width, height);
+				ctx.drawImage(img, x, y, width, height);
+			}
+			
+			function start(){
+				canvasConnect();
+				upload();
+			};
+		</script>	
 	</head>
-	<body>
+	<body onload="start()">
 		<div id="wrapper">
+			<canvas id="canvas"></canvas>
 		</div>
 	</body>
 </html>
