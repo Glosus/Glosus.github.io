@@ -71,7 +71,9 @@
 					ctx.fillRect(0,0,canvasSize,canvasSize);
 					ctx.stroke();
 					writeText();
-					download();
+					$(document).ready(function(){
+						download();
+					});
 				}
 			}
 			
@@ -113,22 +115,20 @@
 					else {
 						line = testLine;
 					}
-				}
-				
+				}				
 				ctx.fillText(line, marginLeft + (600 - ctx.measureText(line).width) / 2, marginTop);
 			}
 			
-			function download(){
+			function download(){	
+				var canvas = document.getElementById('canvas');
 				var dataURL = canvas.toDataURL("image/png");
+				console.log(dataURL);
 				var link = document.createElement("a");
-				link.id = "link";
 				link.href = dataURL;
-				link.download = "my-image-name.png";
-				$(document).ready(function(){
-					if (confirm("Do you want to download this?")){
-						link.click();
-					}
-				});				
+				link.download = "my-image.png";
+				if (confirm("Do you want to download this?")){
+					link.click();
+				};				
 			}
 			
 			function start(){
